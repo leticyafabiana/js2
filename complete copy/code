@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Notícias Profissional</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra de navegação fixa -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h2>NewsPro</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" data-category="technology">Tecnologia</a></li>
+                <li><a href="#" data-category="sports">Esportes</a></li>
+                <li><a href="#" data-category="business">Negócios</a></li>
+                <li><a href="#" data-category="entertainment">Entretenimento</a></li>
+                <li><a href="#" data-category="health">Saúde</a></li>
+            </ul>
+        </nav> 
+        <header>
+            <nav class="navbar">
+                <div class="logo">
+                    <h2>NewsPro</h2>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" data-category="technology">Tecnologia</a></li>
+                    <li><a href="#" data-category="sports">Esportes</a></li>
+                    <li><a href="#" data-category="business">Negócios</a></li>
+                    <li><a href="#" data-category="entertainment">Entretenimento</a></li>
+                    <li><a href="#" data-category="health">Saúde</a></li>
+                </ul>
+                <!-- Botão de troca de tema -->
+                <button id="toggle-theme">Modo Escuro</button>
+            </nav>
+        </header>
+        
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>Últimas Notícias</h1>
+
+            <!-- Contêiner de notícias -->
+            <div id="news-container">
+                <p>Carregando notícias...</p>
+            </div>
+
+            <!-- Botões de Paginação -->
+            <div id="pagination">
+                <button id="prev-page" disabled>Anterior</button>
+                <button id="next-page">Próxima</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 NewsPro. Todos os direitos reservados.</p>
+            <ul class="social-links">
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Twitter</a></li>
+                <li><a href="#">LinkedIn</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="script.js"></script> <!-- Link para o arquivo JavaScript -->
+</body>
+</html> {
+	"folders": [
+		{
+			"path": "../js"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+} let currentPage = 1; // Página inicial
+let selectedCategory = 'technology'; // Categoria inicial
+const apiKey = 'fb766685cdfe4a54b35b8768afad6e90';
+
+// Função para buscar as notícias da API
+function fetchNews(page = 1) {
+    const apiUrl = `https://newsapi.org/v2/top-headlines?category=${selectedCategory}&page=${page}&pageSize=5&apiKey=${apiKey}`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na solicitação: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.articles.length) {
+                displayNews(data.articles);
+                updatePaginationButtons(data.totalResults, page);
+            } else {
+                document.getElementById('news-container').innerHTML = '<p>Nenhuma notícia encontrada.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao buscar notícias:', error);
+            document.getElementById('news-container').innerHTML = '<p>Erro ao carregar notícias. Verifique o console para mais detalhes.</p>';
+        });
+}
+
+// Função para exibir as notícias no HTML
+function displayNews(articles) {
+    const newsContainer = document.getElementById('news-container');
+    newsContainer.innerHTML = '';
+
+    articles.forEach(article => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        
+        newsItem.innerHTML = `
+            <h2>${article.title}</h2>
+            <img src="${article.urlToImage}" alt="Image" style="width:100%;">
+            <p>${article.description || 'Descrição não disponível'}</p>
+            <a href="${article.url}" target="_blank">Leia mais</a>
+        `;
+        
+        newsContainer.appendChild(newsItem);
+    });
+}
+
+// Função para atualizar os botões de paginação
+function updatePaginationButtons(totalResults, page) {
+    const totalPages = Math.ceil(totalResults / 5); // Supondo que há 5 notícias por página
+    const prevPageButton = document.getElementById('prev-page');
+    const nextPageButton = document.getElementById('next-page');
+
+    prevPageButton.disabled = page === 1; // Desabilitar se estiver na primeira página
+    nextPageButton.disabled = page >= totalPages; // Desabilitar se estiver na última página
+}
+
+// Evento para detectar cliques nas categorias do cabeçalho
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault(); // Previne o comportamento padrão do link
+        selectedCategory = this.getAttribute('data-category'); // Atualiza a categoria selecionada
+        currentPage = 1; // Reseta para a primeira página
+        fetchNews(currentPage); // Busca as notícias da nova categoria
+    });
+});
+
+// Evento para ir para a próxima página
+document.getElementById('next-page').addEventListener('click', function () {
+    currentPage++;
+    fetchNews(currentPage);
+});
+
+// Evento para ir para a página anterior
+document.getElementById('prev-page').addEventListener('click', function () {
+    currentPage--;
+    fetchNews(currentPage);
+});
+
+// Carrega as notícias ao carregar a página
+document.addEventListener('DOMContentLoaded', function() {
+    fetchNews(); // Carregar notícias inicialmente
+});
+// Selecionar o botão de alternância
+const toggleButton = document.getElementById('toggle-theme');
+
+// Adicionar evento de clique para alternar entre claro e escuro
+toggleButton.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+
+    // Alterar o texto do botão conforme o modo
+    if (document.body.classList.contains('dark-mode')) {
+        toggleButton.textContent = 'Modo Claro';
+    } else {
+        toggleButton.textContent = 'Modo Escuro';
+    }
+});
+function displayNews(articles) {
+    const newsContainer = document.getElementById('news-container');
+    newsContainer.innerHTML = '';
+
+    articles.forEach(article => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        
+        newsItem.innerHTML = `
+            <h2>${article.title}</h2>
+            <img src="${article.urlToImage}" alt="Image" style="width:100%;">
+            <p>${article.description || 'Descrição não disponível'}</p>
+            <a href="${article.url}" target="_blank">Leia mais</a>
+            <button class="audio-button" onclick="readNews('${article.title}', '${article.description}')">Ouvir Notícia</button>
+        `;
+        
+        newsContainer.appendChild(newsItem);
+    });
+}
+function readNews(title, description) {
+    const speechSynthesis = window.speechSynthesis;
+
+    // Cria uma nova instância de SpeechSynthesisUtterance
+    const utterance = new SpeechSynthesisUtterance();
+
+    // Define o texto que será falado
+    utterance.text = `${title}. ${description}`;
+
+    // Opcional: Configurações adicionais, como alterar a voz ou a velocidade
+    utterance.lang = 'pt-BR'; // Define o idioma para português do Brasil
+    utterance.rate = 1; // Velocidade da fala
+
+    // Faz o navegador falar o texto
+    speechSynthesis.speak(utterance);
+}
+function displayNews(articles) {
+    const newsContainer = document.getElementById('news-container');
+    newsContainer.innerHTML = '';
+
+    articles.forEach(article => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        
+        newsItem.innerHTML = `
+            <h2>${article.title}</h2>
+            <img src="${article.urlToImage}" alt="Image" style="width:100%;">
+            <p>${article.description || 'Descrição não disponível'}</p>
+            <a href="${article.url}" target="_blank">Leia mais</a>
+            <button class="audio-button" onclick="readNews('${article.title}', '${article.description}')">Ouvir Notícia</button>
+            <button class="audio-button" onclick="togglePause()">Pausar</button>
+        `;
+        
+        newsContainer.appendChild(newsItem);
+    });
+}
+let isPaused = false; // Variável para controlar o estado da fala
+
+function togglePause() {
+    const speechSynthesis = window.speechSynthesis;
+
+    if (!isPaused) {
+        speechSynthesis.pause(); // Pausar o áudio
+        isPaused = true;
+        document.querySelectorAll('.audio-button').forEach(button => {
+            if (button.textContent === 'Pausar') {
+                button.textContent = 'Retomar'; // Alterar o texto do botão para "Retomar"
+            }
+        });
+    } else {
+        speechSynthesis.resume(); // Retomar o áudio
+        isPaused = false;
+        document.querySelectorAll('.audio-button').forEach(button => {
+            if (button.textContent === 'Retomar') {
+                button.textContent = 'Pausar'; // Alterar o texto do botão para "Pausar"
+            }
+        });
+    }
+}
+/* Estilos básicos */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Barra de navegação */
+.navbar {
+    background-color: #007BFF;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h2 {
+    color: white;
+    margin: 0;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #f0f0f0;
+}
+
+/* Contêiner de conteúdo */
+.container {
+    max-width: 1200px;
+    margin: 100px auto 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Título principal */
+h1 {
+    text-align: center;
+    color: #007BFF;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* Estilo para o grid de notícias */
+#news-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.news-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.news-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px 8px 0 0;
+}
+
+.news-item h2 {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #007BFF;
+}
+
+.news-item p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.news-item a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+    margin-top: auto;
+}
+
+.news-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Botões de paginação */
+#pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#pagination button {
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Rodapé */
+footer {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+
+footer .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+footer p {
+    margin: 0;
+}
+
+.social-links {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.social-links li {
+    display: inline;
+    margin: 0 10px;
+}
+
+.social-links li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.social-links li a:hover {
+    color: #f0f0f0;
+}
+/* Modo Escuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .navbar {
+    background-color: #1f1f1f;
+}
+
+body.dark-mode .logo h2, 
+body.dark-mode .nav-links li a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .container {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode .news-item {
+    background-color: #333333;
+}
+
+body.dark-mode footer {
+    background-color: #1f1f1f;
+}
+
+body.dark-mode #pagination button {
+    background-color: #333333;
+}
+/* Estilos adicionais para a cor azul no modo escuro */
+body.dark-mode .logo h2,
+body.dark-mode .nav-links li a {
+    color: #007BFF; /* Azul brilhante */
+}
+/* Estilos alternativos para uma cor mais suave no modo escuro */
+body.dark-mode .logo h2,
+body.dark-mode .nav-links li a {
+    color: #e0e0e0; /* Cinza claro ou branco suave */
+}
+.audio-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.audio-button:hover {
+    background-color: #0056b3;
+}
+.audio-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.audio-button:hover {
+    background-color: #0056b3;
+}
+ 

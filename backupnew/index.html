@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Notícias Profissional</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra de navegação fixa -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h2>NewsPro</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" data-category="technology">Tecnologia</a></li>
+                <li><a href="#" data-category="sports">Esportes</a></li>
+                <li><a href="#" data-category="business">Negócios</a></li>
+                <li><a href="#" data-category="entertainment">Entretenimento</a></li>
+                <li><a href="#" data-category="health">Saúde</a></li>
+            </ul>
+        </nav> 
+        <header>
+            <nav class="navbar">
+                <div class="logo">
+                    <h2>NewsPro</h2>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" data-category="technology">Tecnologia</a></li>
+                    <li><a href="#" data-category="sports">Esportes</a></li>
+                    <li><a href="#" data-category="business">Negócios</a></li>
+                    <li><a href="#" data-category="entertainment">Entretenimento</a></li>
+                    <li><a href="#" data-category="health">Saúde</a></li>
+                </ul>
+                <!-- Botão de troca de tema -->
+                <button id="toggle-theme">Modo Escuro</button>
+            </nav>
+        </header>
+        
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>Últimas Notícias</h1>
+
+            <!-- Contêiner de notícias -->
+            <div id="news-container">
+                <p>Carregando notícias...</p>
+            </div>
+
+            <!-- Botões de Paginação -->
+            <div id="pagination">
+                <button id="prev-page" disabled>Anterior</button>
+                <button id="next-page">Próxima</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 NewsPro. Todos os direitos reservados.</p>
+            <ul class="social-links">
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Twitter</a></li>
+                <li><a href="#">LinkedIn</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="script.js"></script> <!-- Link para o arquivo JavaScript -->
+</body>
+</html>
+<div id="favorites-container" class="container">
+    <h1>Favoritos</h1>
+    <div id="favorites-news"></div>
+</div>
+<!-- Contêiner de Favoritos -->
+<div id="favorites-container" class="container">
+    <h1>Favoritos</h1>
+    <div id="favorites-news" class="news-grid"></div>
+</div>
+
